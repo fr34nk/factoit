@@ -1,8 +1,17 @@
 import logo from './logo.svg';
 import './App.css';
+import { useState } from 'react';
 
 export default function Board () {
-  const boardRows=[0,1,2].map(x => <BoardRow key={x}/>)
+  const [state, setState] = useState({
+    board: [ [0,0,0], 
+             [0,0,0], 
+             [0,0,0] ]
+  })
+
+  const boardRows=state.board.map(
+    (row, idx) => <BoardRow key={idx} row={row}/>
+  )
 
   return (
     <div className="board">
@@ -11,8 +20,8 @@ export default function Board () {
   )
 };
 
-function BoardRow () {
-  const rowSquares = [0,1,2].map((x) => <Square key={x} checked="X" />)
+function BoardRow ({ row }) {
+  const rowSquares = row.map((rowCheck, idx) => <Square key={idx} checked={rowCheck} />)
 
   return (
       <div className="board-row">

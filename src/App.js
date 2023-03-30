@@ -9,9 +9,23 @@ export default function Board () {
              [0,0,0] ]
   })
 
+  function onSquareClick (rowId, squareId, ev) {
+    console.log('rowId: ', );
+    console.log(rowId);
+
+    const newState = {...state};
+    for (let i=0; i < state.board.length; i++) {
+      for (let j=0; j < state.board[i].length; j++) {
+          if (i == rowId && j == squareId) {
+            newState.board[i][j] = 'X'
+          }
+      }
+    }
+    setState(newState);
+  }
 
   const boardRows=state.board.map(
-    (squareList, idx) => <BoardRow key={idx} rowId={idx} squares={squareList}/>
+    (squareList, idx) => <BoardRow key={idx} rowId={idx} squares={squareList} onSquareClick={onSquareClick} />
   )
 
   return (
@@ -26,9 +40,9 @@ function BoardRow ({ squares, rowId, onSquareClick }) {
     (rowCheck, idx) => 
       <Square 
         key={idx} 
-        rowId={rowId} 
-        squareId={idx} 
         checked={rowCheck} 
+        rowId={rowId}
+        squareId={idx}
         onClick={onSquareClick}
       />
     )
@@ -40,6 +54,6 @@ function BoardRow ({ squares, rowId, onSquareClick }) {
   )
 }
 
-function Square ({ checked }) {
-  return <button className="square">{checked}</button>
+function Square ({ checked, rowId, squareId, onClick }) {
+  return <button className="square" onClick={onClick.bind(this, rowId, squareId)}>{checked}</button>
 }

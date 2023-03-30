@@ -9,8 +9,9 @@ export default function Board () {
              [0,0,0] ]
   })
 
+
   const boardRows=state.board.map(
-    (row, idx) => <BoardRow key={idx} row={row}/>
+    (squareList, idx) => <BoardRow key={idx} rowId={idx} squares={squareList}/>
   )
 
   return (
@@ -20,12 +21,21 @@ export default function Board () {
   )
 };
 
-function BoardRow ({ row }) {
-  const rowSquares = row.map((rowCheck, idx) => <Square key={idx} checked={rowCheck} />)
+function BoardRow ({ squares, rowId, onSquareClick }) {
+  const squareList = squares.map(
+    (rowCheck, idx) => 
+      <Square 
+        key={idx} 
+        rowId={rowId} 
+        squareId={idx} 
+        checked={rowCheck} 
+        onClick={onSquareClick}
+      />
+    )
 
   return (
       <div className="board-row">
-        {rowSquares}
+        {squareList}
       </div>
   )
 }

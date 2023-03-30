@@ -1,25 +1,26 @@
 import logo from './logo.svg';
 import './App.css';
 
-function App() {
+export default function Board () {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="board">
+      <BoardRow/>
+      <BoardRow/>
+      <BoardRow/>
     </div>
-  );
+  )
+};
+
+function BoardRow () {
+  return (
+      <div className="board-row">
+        <Square checked="X"/>
+        <Square checked="X"/>
+        <Square checked="X"/>
+      </div>
+  )
 }
 
-export default App;
+function Square ({ checked }) {
+  return <button className="square">{checked}</button>
+}

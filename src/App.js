@@ -4,9 +4,10 @@ import { useState } from 'react';
 
 export default function Board () {
   const [state, setState] = useState({
-    board: [ [0,0,0], 
-             [0,0,0], 
-             [0,0,0] ]
+    board: [ [null,null,null], 
+             [null,null,null], 
+             [null,null,null] ],
+    symbol: 'X'
   })
 
   function onSquareClick (rowId, squareId, ev) {
@@ -17,10 +18,11 @@ export default function Board () {
     for (let i=0; i < state.board.length; i++) {
       for (let j=0; j < state.board[i].length; j++) {
           if (i == rowId && j == squareId) {
-            newState.board[i][j] = 'X'
+            newState.board[i][j] = state.symbol;
           }
       }
     }
+    newState.symbol = newState.symbol === 'X' ? '0' : 'X';
     setState(newState);
   }
 

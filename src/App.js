@@ -7,7 +7,8 @@ export default function Board () {
     board: [ [null,null,null], 
              [null,null,null], 
              [null,null,null] ],
-    symbol: 'X'
+    symbol: 'X',
+    round: 0
   })
 
   function onSquareClick (rowId, squareId, ev) {
@@ -15,14 +16,26 @@ export default function Board () {
     console.log(rowId);
 
     const newState = {...state};
+
+    // Increment round number
+    newState.round += 1;
+
+    // calculate new state of the board
     for (let i=0; i < state.board.length; i++) {
       for (let j=0; j < state.board[i].length; j++) {
           if (i == rowId && j == squareId) {
+            if (state.board[i][j] !== null) {
+              return
+            }
+
             newState.board[i][j] = state.symbol;
           }
       }
     }
+
+    // calculate new state symbol
     newState.symbol = newState.symbol === 'X' ? '0' : 'X';
+
     setState(newState);
   }
 

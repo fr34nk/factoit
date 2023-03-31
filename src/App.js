@@ -70,5 +70,7 @@ function BoardRow ({ squares, rowId, onSquareClick }) {
 }
 
 function Square ({ checked, rowId, squareId, onClick }) {
-  return <button className="square" onClick={onClick.bind(this, rowId, squareId)}><p{checked}></p> </button>
+  return <button className="square" onClick={onClick.bind(this, rowId, squareId)}>
+    <p>{checked}</p> 
+  </button>
 }

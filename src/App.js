@@ -2,9 +2,7 @@ import './App.css';
 import useGame, { roundPlay } from './App.state';
 
 const boardInitialState = {
-  board: [ [null,null,null], 
-            [null,null,null], 
-            [null,null,null] ],
+  board: Array(3).fill(Array(3).fill(null)),
   symbol: 'X',
   round: 1,
   winner: null

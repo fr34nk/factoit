@@ -8,7 +8,20 @@ const boardInitialState = {
   winner: null
 }
 
-export default function Board () {
+export default function Game () {
+  return (
+    <div className="game">
+      <div className="game-board">
+        <Board />
+      </div>
+      <div className="game-info">
+        <ol>{0}</ol>
+      </div>
+    </div>
+  )
+}
+
+function Board () {
   const [state, setState] = useGame(boardInitialState);
 
   function onSquareClick (rowId, squareId, ev) {

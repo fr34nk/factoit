@@ -13,7 +13,7 @@ const LOG_LVLS = {
 
 // If both search and replaceBy conditions are met, replace the string, otherse return "or" value
 String.prototype.replaceOr = function (search, replaceBy, or) {
-    if (String.prototype.match.call(this, search) && replaceBy) {
+    if (String.prototype.match.call(this, search) && replaceBy != undefined) {
         return String.prototype.replace.call(this, search, replaceBy)
     }
     return or;

@@ -15,7 +15,10 @@ export default useGame;
 export function playerClick (state, rowId, squareId) {
   try {
       // Increment round number
-      if (state.round === 9) {
+      if (state.round === 10) {
+        if (state.winner == null) {
+          state.winner = 'Draw';
+        }
         return state;
       }
       state.round += 1;

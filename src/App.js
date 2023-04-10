@@ -5,8 +5,12 @@ import C from './interfaces/enums/GameContentsEnum';
 
 
 const boardInitialState = {
-  board: Array(3).fill(Array(3).fill(null)),
-  symbol: 'X',
+  board: [  
+    [null, null, null],
+    [null, null, null],
+    [null, null, null]
+  ],
+  symbol: null,
   round: 1,
   winner: null
 }

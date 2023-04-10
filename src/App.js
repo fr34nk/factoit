@@ -10,28 +10,13 @@ const boardInitialState = {
     [null, null, null],
     [null, null, null]
   ],
+  playHistory: [],
   symbol: null,
   round: 1,
   winner: null
 }
 
 export default function Game () {
-  return (
-    <div className="game">
-      <h2>Tic-Tac-Toe Game</h2>
-      <div className="container-control">
-        <HistoryCtrlLeft />
-        <div className="game-board">
-          <Board />
-        </div>
-        <HistoryCtrlRight/>
-        </div>
-      <HistoryInfo />
-    </div>
-  )
-}
-
-function Board () {
   const [state, setState] = useGame(boardInitialState);
 
   function onSquareClick (rowId, squareId, ev) {
@@ -52,6 +37,22 @@ function Board () {
     setState(resultState);
   }
 
+  return (
+    <div className="game">
+      <h2>Tic-Tac-Toe Game</h2>
+      <div className="container-control">
+        <HistoryCtrlLeft />
+        <div className="game-board">
+          <Board onSquareClick={onSquareClick} state={state}/>
+        </div>
+        <HistoryCtrlRight/>
+      </div>
+      <HistoryInfo infoList={state.playHistory}/>
+    </div>
+  )
+}
+
+function Board ({ state, onSquareClick }) {
   const boardRows=state.board.map(
     (squareList, idx) => <BoardRow key={idx} rowId={idx} squares={squareList} onSquareClick={onSquareClick} />
   )

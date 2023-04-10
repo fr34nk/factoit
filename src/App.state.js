@@ -32,7 +32,11 @@ export function playerClick (state, rowId, squareId) {
         ? C.PLAYER_2_SYMBOL
         : C.PLAYER_1_SYMBOL;
 
+
       state.board = insertPlayOnBoard(state.board, rowId, squareId, state.symbol);
+
+      const playDescription = { round: state.round, player: state.symbol, position: { row: rowId, col: squareId }};
+      state.playHistory = [...state.playHistory, playDescription];
 
       state.winner = resolveGameWinner(state.board);
   } catch (e) {

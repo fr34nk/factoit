@@ -16,8 +16,6 @@ const boardInitialState = {
 }
 
 export default function Game () {
-  Log.debug('Start game');
-
   return (
     <div className="game">
       <h2>Tic-Tac-Toe Game</h2>
@@ -58,7 +56,6 @@ export default function Game () {
 }
 
 function Board () {
-  Log.debug('Rendered Game');
   const [state, setState] = useGame(boardInitialState);
 
   function onSquareClick (rowId, squareId, ev) {
@@ -81,8 +78,6 @@ function Board () {
 };
 
 function BoardRow ({ squares, rowId, onSquareClick }) {
-  Log.debug(`Row ${rowId} was rendered`);
-
   const squareList = squares.map(
     (rowCheck, idx) => 
       <Square 
@@ -102,8 +97,6 @@ function BoardRow ({ squares, rowId, onSquareClick }) {
 }
 
 function Square ({ checked, rowId, squareId, onClick }) {
-  Log.debug(`Column %col was rendered`, { col: squareId });
-
   return <button aria-label="square" className="square" onClick={onClick.bind(this, rowId, squareId)}>
     <p>{checked}</p> 
   </button>

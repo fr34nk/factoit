@@ -324,5 +324,21 @@ describe.skip('Test roundPlay game', () => {
     expect(game.winner).not.toBeNull()
     expect(game.winner).toBe(C.PLAYER_2_SYMBOL);
   });
-
 });
+
+
+
+describe.skip('Test history control arrows', () => {
+  it(`must display round history if some user theres a play`, () => {
+    expect(true).toBe(true);
+  });
+
+  it(`must advance round history if user clicks on right arrow`, () => {
+    expect(true).toBe(true);
+  });
+
+  it(`must revert round history if user clicks on left arrow`, () => {
+    expect(true).toBe(true);
+
+  });
+})

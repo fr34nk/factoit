@@ -1,5 +1,7 @@
 import './App.css';
+import Log from './services/Logger';
 import useGame, { roundPlay } from './App.state';
+
 
 const boardInitialState = {
   board: Array(3).fill(Array(3).fill(null)),
@@ -9,6 +11,8 @@ const boardInitialState = {
 }
 
 export default function Game () {
+  Log.debug('Start game');
+
   return (
     <div className="game">
       <div className="game-board">
@@ -22,9 +26,12 @@ export default function Game () {
 }
 
 function Board () {
+  Log.debug('Rendered Game');
   const [state, setState] = useGame(boardInitialState);
 
   function onSquareClick (rowId, squareId, ev) {
+    Log.debug('Square on row %row and column %column was clicked', { row: rowId, column: squareId });
+
     const stateReference = { ...state };
     let resultState = roundPlay(stateReference, rowId, squareId)
     setState(resultState);
@@ -43,6 +50,8 @@ function Board () {
 };
 
 function BoardRow ({ squares, rowId, onSquareClick }) {
+  Log.debug(`Row ${rowId} was rendered`);
+
   const squareList = squares.map(
     (rowCheck, idx) => 
       <Square 
@@ -62,6 +71,8 @@ function BoardRow ({ squares, rowId, onSquareClick }) {
 }
 
 function Square ({ checked, rowId, squareId, onClick }) {
+  Log.debug(`Column %col was rendered`, { col: squareId });
+
   return <button aria-label="square" className="square" onClick={onClick.bind(this, rowId, squareId)}>
     <p>{checked}</p> 
   </button>

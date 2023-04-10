@@ -36,7 +36,11 @@ function Board () {
 
   function onSquareClick (rowId, squareId, ev) {
     Log.debug('Square on row %row and column %column was clicked', { row: rowId, column: squareId });
-    const squareContent = ev.target.innerText;
+    // bug: using innerHTML because when invoking  userClick lib react-testing-library/user-event'  
+    // innerText is returning null even when its filled, while debugging on browser, innerText returns
+    // expected result;
+    const squareHTMLContent = ev.target.innerHTML;
+    const squareContent = squareHTMLContent.replace(/<\/?p>/g, ''); // strip-off <p>
 
     // if already filled, just dont update state 
     if ([C.PLAYER_1_SYMBOL, C.PLAYER_2_SYMBOL].includes(squareContent)) {

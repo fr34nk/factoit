@@ -81,7 +81,6 @@ describe('Test board component', () => {
 
     // it clicked in another square, fills it with '0'
     let firstRow = await within(rows[0]).findAllByLabelText(S.SQUARE);
-    // let firstSqrSeconddRow = squaresSecondRow[0];
     let secondSquareFirstRow = firstRow[1];
 
     // expect non-clicked square to be NOT filled
@@ -89,7 +88,7 @@ describe('Test board component', () => {
 
 
     await waitFor(() => userEvent.click(secondSquareFirstRow))
-    expect(secondSquareFirstRow ).toHaveTextContent(C.PLAYER_2_SYMBOL)
+    expect(secondSquareFirstRow).toHaveTextContent(C.PLAYER_2_SYMBOL)
 
     expect(true).toBe(true)
   });
@@ -275,8 +274,7 @@ describe('Test resolveGameWinner method', () => {
 });
 
 
-
-describe.skip('Test roadPlay game', () => {
+describe.skip('Test roundPlay game', () => {
   let gameInitialState;
   let game;
   let resetState;
@@ -290,16 +288,12 @@ describe.skip('Test roadPlay game', () => {
       winner: null
     };
 
-    // setGame(gameInitialState);
-
-    // const { result, rerender } = await renderHook(() => useGame({ ...gameInitialState }));
     const { result, rerender } = renderHook(useGame, { ...gameInitialState });
     [game, setGame] = result.current;
     resetState = rerender;
   });
 
   afterEach(async () => {
-    // const { result, rerender } = await renderHook(() => useGame({ ...gameInitialState }));
     const { result, rerender } = renderHook(useGame, { ...gameInitialState });
     [game, setGame] = result.current;
     resetState = rerender;
@@ -307,8 +301,6 @@ describe.skip('Test roadPlay game', () => {
 
 
   it(`it must result in ${C.PLAYER_1_SYMBOL} winner after 5th play (${C.PLAYER_1_SYMBOL} marks main diagonal)`, async () => {
-    // resetState({...gameInitialState})
-
     // X fills main diagonal 
     roundPlay(game, 0, 0);  // X play
     roundPlay(game, 0, 1);  // 0 play

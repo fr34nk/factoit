@@ -1,22 +1,38 @@
 import { render, screen, within, waitFor, act, renderHook } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import App from './App';
-
 import  useGame, { roundPlay, resolveGameWinner } from './App.state';
+import C from './interfaces/enums/GameContentsEnum';
+
+const selectors = {
+  'TITLE': /Tic-Tac-Toe Game/i,
+  'CONTROL_PREVIOUS_HISTORY': /^control-left-arrow$/i,
+  'CONTROL_NEXT_HISTORY': /^control-right-arrow$/i,
+  'ROW': /^row$/i,
+  'SQUARE': /^square$/i,
+  'CONTAINER_ROUND': /^container-round$/i,
+};
+const S=selectors;
 
 describe('Test game component', () => {
+  beforeAll(() => {
+  })
+
   it('must render game component control arrows', () => {
     render(<App />);
+    const leftArrow = screen.getByLabelText(S.CONTROL_PREVIOUS_HISTORY);
+    expect(leftArrow).not.toBeEmptyDOMElement();
+    expect(leftArrow).toHaveTextContent(C.CONTROL_PREVIOUS_HISTORY);
 
-    const leftArrow = screen.getByText(/control-left-arrow/i)
-    expect(leftArrow ).not.toBeEmptyDOMElement()
-
-    const rightArrow = screen.getByText(/control-right-arrow/i)
-    expect(rightArrow).not.toBeEmptyDOMElement()
+    const rightArrow = screen.getByLabelText(S.CONTROL_NEXT_HISTORY);
+    expect(rightArrow).not.toBeEmptyDOMElement();
+    expect(rightArrow).toHaveTextContent(C.CONTROL_NEXT_HISTORY);
   });
 
   it('must render game round play history list as player plays rounds', () => {
-    expect(true).toBe(true);
+    render(<App />);
+    const roundContainer = screen.getByLabelText(S.CONTAINER_ROUND);
+    expect(roundContainer).not.toBeEmptyDOMElement();
   });
 
   it('must render pale control-arrows when game starts', () => {
@@ -35,9 +51,9 @@ describe('Test board component', () => {
 
   it('renders board game', () => {
     render(<App />);
-    const board = screen.getByText(/Tic-Tac-Toe Game/i);
+    const board = screen.getByText(S.TITLE);
 
-    const squares = screen.getAllByLabelText(/square/i);
+    const squares = screen.getAllByLabelText(S.SQUARE);
     expect(squares).toHaveLength(9);
 
     squares.forEach(sqr => {
@@ -47,46 +63,56 @@ describe('Test board component', () => {
     expect(board).toBeInTheDocument();
   });
 
-  it('mark squares as user click', async () => {
+  it('mark squares as user click (case 1)', async () => {
     render(<App />);
 
-    let rows = screen.getAllByLabelText(/row/i);
-    let squaresSecondRow = await within(rows[2]).findAllByLabelText(/square/i)
+    let rows = screen.getAllByLabelText(S.ROW);
+    let squaresSecondRow = await within(rows[1]).findAllByLabelText(S.SQUARE)
     let secSqrSecRow = squaresSecondRow[1];
     
     await waitFor(() => userEvent.click(secSqrSecRow))
 
-    expect(secSqrSecRow).toHaveTextContent('X')
+    expect(secSqrSecRow).toHaveTextContent(C.PLAYER_1_SYMBOL)
 
     // if clicked again, keep mark
     await waitFor(() => userEvent.click(secSqrSecRow))
-    expect(secSqrSecRow).toHaveTextContent('X')
+    expect(secSqrSecRow).toHaveTextContent(C.PLAYER_1_SYMBOL)
+
 
     // it clicked in another square, fills it with '0'
-    let firstSqrSeconddRow = squaresSecondRow[0];
-    await waitFor(() => userEvent.click(firstSqrSeconddRow ))
-    expect(firstSqrSeconddRow).toHaveTextContent('0')
+    let firstRow = await within(rows[0]).findAllByLabelText(S.SQUARE);
+    // let firstSqrSeconddRow = squaresSecondRow[0];
+    let secondSquareFirstRow = firstRow[1];
+
+    // expect non-clicked square to be NOT filled
+    expect(secondSquareFirstRow).toHaveTextContent("")
+
+
+    await waitFor(() => userEvent.click(secondSquareFirstRow))
+    expect(secondSquareFirstRow ).toHaveTextContent(C.PLAYER_2_SYMBOL)
+
+    expect(true).toBe(true)
   });
 
-  it('mark squares as user click', async () => {
+  it('mark squares as user click (case 2)', async () => {
     render(<App />);
 
-    let rows = screen.getAllByLabelText(/row/i);
-    let squaresSecondRow = await within(rows[2]).findAllByLabelText(/square/i)
+    let rows = screen.getAllByLabelText(S.ROW);
+    let squaresSecondRow = await within(rows[2]).findAllByLabelText(S.SQUARE)
     let secSqrSecRow = squaresSecondRow[1];
     
     await waitFor(() => userEvent.click(secSqrSecRow))
 
-    expect(secSqrSecRow).toHaveTextContent('X')
+    expect(secSqrSecRow).toHaveTextContent(C.PLAYER_1_SYMBOL)
 
     // if clicked again, keep mark
     await waitFor(() => userEvent.click(secSqrSecRow))
-    expect(secSqrSecRow).toHaveTextContent('X')
+    expect(secSqrSecRow).toHaveTextContent(C.PLAYER_1_SYMBOL)
 
-    // it clicked in another square, fills it with '0'
+    // it clicked in another square, fills it with player_2 symbol
     let firstSqrSeconddRow = squaresSecondRow[0];
     await waitFor(() => userEvent.click(firstSqrSeconddRow ))
-    expect(firstSqrSeconddRow).toHaveTextContent('0')
+    expect(firstSqrSeconddRow).toHaveTextContent(C.PLAYER_2_SYMBOL)
   });
 })
 
@@ -101,17 +127,17 @@ describe('Test resolveGameWinner method', () => {
   });
 
   it('must return a winner if 1th row is filled', () => {
-    const board =[ ['X','X', null], 
-              [null,null,null], 
-              [null,null,null] ];
+    const board =[ [C.PLAYER_1_SYMBOL,    C.PLAYER_1_SYMBOL,      null], 
+                   [null,                 null,                   null], 
+                   [null,                 null,                   null] ];
 
     let gameResult = resolveGameWinner(board)
     expect(gameResult).toBeNull();
 
     // --> fills 1th row
-    board[0][2] = 'X';
+    board[0][2] = C.PLAYER_1_SYMBOL;
     gameResult = resolveGameWinner(board)
-    expect(gameResult).toBe('X')
+    expect(gameResult).toBe(C.PLAYER_1_SYMBOL)
 
     // resolveGameWinner()
     expect(true).toBe(true)
@@ -119,124 +145,124 @@ describe('Test resolveGameWinner method', () => {
 
 
   it('must return a winner if 2th row is filled', () => {
-    const board =[ ['X','X', null], 
-              [null,'X','X'], 
-              [null,null,null] ];
+    const board =[ [C.PLAYER_1_SYMBOL,  C.PLAYER_1_SYMBOL,      null             ], 
+                   [null,               C.PLAYER_1_SYMBOL,      C.PLAYER_1_SYMBOL], 
+                   [null,               null,                   null             ] ];
 
     let gameResult = resolveGameWinner(board)
     expect(gameResult).toBeNull();
 
     // --> fills 1th row
-    board[1][0] = 'X';
+    board[1][0] = C.PLAYER_1_SYMBOL;
     gameResult = resolveGameWinner(board)
-    expect(gameResult).toBe('X')
+    expect(gameResult).toBe(C.PLAYER_1_SYMBOL)
 
     // resolveGameWinner()
     expect(true).toBe(true)
   });
 
   it('must return a winner if 3th row is filled', () => {
-    const board =[ ['X',null, null], 
-                   [null,'X',null], 
-                   [null,null,null] ];
+    const board =[ [C.PLAYER_1_SYMBOL,    null,                 null], 
+                   [null,                 C.PLAYER_1_SYMBOL,    null], 
+                   [null,                 null,                 null] ];
 
     let gameResult = resolveGameWinner(board)
     expect(gameResult).toBeNull();
 
     // --> fills 1th row
-    board[2][0] = 'X';
+    board[2][0] = C.PLAYER_1_SYMBOL;
     gameResult = resolveGameWinner(board)
     expect(gameResult).toBeNull();
 
 
-    board[2][1] = 'X';
+    board[2][1] = C.PLAYER_1_SYMBOL;
     gameResult = resolveGameWinner(board)
     expect(gameResult).toBeNull();
 
-    board[2][2] = 'X';
+    board[2][2] = C.PLAYER_1_SYMBOL;
     gameResult = resolveGameWinner(board)
-    expect(gameResult).toBe('X')
+    expect(gameResult).toBe(C.PLAYER_1_SYMBOL)
 
     // resolveGameWinner()
     expect(true).toBe(true)
   });
 
   it('must return a winner if 1th column is filled', () => {
-    const board =[ ['X',null, null], 
-              ['X',null,null], 
-              [null,null,null] ];
+    const board =[ [C.PLAYER_1_SYMBOL,    null,                 null], 
+                   [C.PLAYER_1_SYMBOL,    null,                 null], 
+                   [null,                 null,                 null] ];
 
     let gameResult = resolveGameWinner(board)
     expect(gameResult).toBeNull();
 
 
-    board[2][0] = 'X';
+    board[2][0] = C.PLAYER_1_SYMBOL;
     gameResult = resolveGameWinner(board)
-    expect(gameResult).toBe('X')
+    expect(gameResult).toBe(C.PLAYER_1_SYMBOL)
   });
 
 
   it('must return a winner if 2th column is filled', () => {
-    const board =[ [null,'0', null], 
-              [null,'0',null], 
-              [null,null,null] ];
+    const board =[ [null,                 C.PLAYER_2_SYMBOL,    null], 
+                   [null,                 C.PLAYER_2_SYMBOL,    null], 
+                   [null,                 null,                 null] ];
 
     let gameResult = resolveGameWinner(board)
     expect(gameResult).toBeNull();
 
-    board[2][1] = '0';
+    board[2][1] = C.PLAYER_2_SYMBOL;
     gameResult = resolveGameWinner(board)
-    expect(gameResult).toBe('0')
+    expect(gameResult).toBe(C.PLAYER_2_SYMBOL)
   });
 
   it('must return a winner if 3th column is filled', () => {
-    const board =[ [null,null,'X'], 
-              [null,null,'X'], 
-              [null,null,null] ];
+    const board =[  [null,                null,                 C.PLAYER_1_SYMBOL], 
+                    [null,                null,                 C.PLAYER_1_SYMBOL], 
+                    [null,                null,                 null             ] ];
 
     let gameResult = resolveGameWinner(board)
     expect(gameResult).toBeNull();
 
-    board[2][2] = 'X';
+    board[2][2] = C.PLAYER_1_SYMBOL;
     gameResult = resolveGameWinner(board)
-    expect(gameResult).toBe('X')
+    expect(gameResult).toBe(C.PLAYER_1_SYMBOL)
   });
 
-  it('must return a winner if main diagonal is filled', () => {
-    const board =[ ['X',null,'0'], 
-                   [null,'X',null], 
-                   ['X','0',null] ];
+  it('must return a winner if main diagonal is filled (case 1)', () => {
+    const board =[ [C.PLAYER_2_SYMBOL,    null,                 C.PLAYER_2_SYMBOL ], 
+                   [null,                 C.PLAYER_2_SYMBOL,    null              ], 
+                   [C.PLAYER_1_SYMBOL,    C.PLAYER_2_SYMBOL,    null              ] ];
 
     let gameResult = resolveGameWinner(board)
     expect(gameResult).toBeNull();
 
-    board[1][0] = '0';
+    board[1][0] = C.PLAYER_2_SYMBOL;
     gameResult = resolveGameWinner(board)
     expect(gameResult).toBeNull();
 
 
-    board[2][2] = 'X';
+    board[2][2] = C.PLAYER_2_SYMBOL;
     gameResult = resolveGameWinner(board)
-    expect(gameResult).toBe('X');
+    expect(gameResult).toBe(C.PLAYER_2_SYMBOL);
   });
 
 
-  it('must return a winner if secondary diagonal is filled', () => {
-    const board =[ ['X','X',null], 
-                   [null,'0',null], 
-                   ['0','0','X'] ];
+  it('must return a winner if secondary diagonal is filled (case 2)', () => {
+    const board =[ [C.PLAYER_1_SYMBOL,    C.PLAYER_1_SYMBOL,    null              ], 
+                   [null,                 C.PLAYER_2_SYMBOL,    null              ], 
+                   [C.PLAYER_2_SYMBOL,    C.PLAYER_2_SYMBOL,    C.PLAYER_1_SYMBOL ] ];
 
     let gameResult = resolveGameWinner(board)
     expect(gameResult).toBeNull();
 
-    board[1][0] = '0';
+    board[1][0] = C.PLAYER_1_SYMBOL;
     gameResult = resolveGameWinner(board)
     expect(gameResult).toBeNull();
 
 
-    board[0][2] = '0';
+    board[0][2] = C.PLAYER_2_SYMBOL;
     gameResult = resolveGameWinner(board)
-    expect(gameResult).toBe('0');
+    expect(gameResult).toBe(C.PLAYER_2_SYMBOL);
   });
 
 
@@ -259,7 +285,7 @@ describe.skip('Test roadPlay game', () => {
       board: [ [null,null,null], 
                 [null,null,null], 
                 [null,null,null] ],
-      symbol: 'X',
+      symbol: C.PLAYER_1_SYMBOL,
       round: 1,
       winner: null
     };
@@ -280,7 +306,7 @@ describe.skip('Test roadPlay game', () => {
   })
 
 
-  it('it must result in X winner after 5th play (X marks main diagonal)', async () => {
+  it(`it must result in ${C.PLAYER_1_SYMBOL} winner after 5th play (${C.PLAYER_1_SYMBOL} marks main diagonal)`, async () => {
     // resetState({...gameInitialState})
 
     // X fills main diagonal 
@@ -291,10 +317,10 @@ describe.skip('Test roadPlay game', () => {
     roundPlay(game, 2, 2); // X play
 
     expect(game.winner).not.toBeNull()
-    expect(game.winner).toBe('X');
+    expect(game.winner).toBe(C.PLAYER_1_SYMBOL);
   });
 
-  it.skip('it must result in X winner after 8th play (0 marks secondary diagonal)', async () => {
+  it.skip(`it must result in ${C.PLAYER_1_SYMBOL} winner after 8th play (${C.PLAYER_2_SYMBOL} marks secondary diagonal)`, async () => {
     resetState({...gameInitialState})
 
     // diagonal fill
@@ -304,7 +330,7 @@ describe.skip('Test roadPlay game', () => {
     console.log(game)
 
     expect(game.winner).not.toBeNull()
-    expect(game.winner).toBe('0');
+    expect(game.winner).toBe(C.PLAYER_2_SYMBOL);
   });
 
 });

@@ -60,6 +60,12 @@ function Board () {
 
   function onSquareClick (rowId, squareId, ev) {
     Log.debug('Square on row %row and column %column was clicked', { row: rowId, column: squareId });
+    const squareContent = ev.target.innerText;
+
+    // if already filled, just dont update state 
+    if ([C.PLAYER_1_SYMBOL, C.PLAYER_2_SYMBOL].includes(squareContent)) {
+      return
+    }
 
     const stateReference = { ...state };
     let resultState = playerClick(stateReference, rowId, squareId)

@@ -47,7 +47,7 @@ export default function Game () {
         </div>
         <HistoryCtrlRight/>
       </div>
-      <HistoryInfo infoList={state.playHistory}/>
+      <HistoryInfo playHistory={state.playHistory}/>
     </div>
   )
 }
@@ -89,31 +89,35 @@ function Square ({ checked, rowId, squareId, onClick }) {
   </button>
 }
 
-// === History control === 
-function HistoryInfo () {
+
+// === History Info control === 
+function HistoryInfo ({ playHistory=[] }) {
+  const historyInfoList = playHistory.map((info) => {
+    const { round, player, position: { row, col  } } = info;
+    const rowPosition = row + 1;
+    const colPosition = col + 1;
+
+
+    return (
+        <div key={round} className="round">
+          <div className="play">Round {round}: </div>
+          <div className="description">
+            <p aria-label="round-play"> Player {player} played on [{rowPosition}][{colPosition}] </p>
+          </div>
+        </div>
+    )
+  })
+
   return (
       <div className="game-info">
         <h4>Round Plays</h4>
         <ul className="container-round" aria-label="container-round">
-
-          <div className="round" aria-label="round-play">
-            <div className="play">Round 1: </div>
-            <div className="description">Player 1 put a {C.PLAYER_1_SYMBOL} on square k,z</div>
-          </div>
-
-          <div className="round" aria-label="round-play">
-            <div className="play">Round 1: </div>
-            <div className="description">Player 1 put a {C.PLAYER_1_SYMBOL} on square k,z</div>
-          </div>
-
-          <div className="round" aria-label="round-play">
-            <div className="play">Round 1: </div>
-            <div className="description">Player 1 put a {C.PLAYER_1_SYMBOL} on square k,z</div>
-          </div>
+          {historyInfoList} 
         </ul>
       </div>
   )
 }
+
 
 function HistoryCtrlLeft () {
   return (

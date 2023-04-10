@@ -4,6 +4,7 @@ import C from './interfaces/enums/GameContentsEnum';
 
 const useGame = (initialState) => {
   const [state, setValue] = useState(initialState);
+
   // useCallback memoize the value 
   const setState =  useCallback(x => setValue(x), []);
   return [ state, setState ]
@@ -13,6 +14,8 @@ export default useGame;
 
 // === Game Logic ===
 export function playerClick (state, rowId, squareId) {
+  Log.debug("[GAME_STATE_IN]: ", JSON.stringify(state, 2, null));
+
   try {
       // Increment round number
       if (state.round === 10) {
@@ -32,10 +35,11 @@ export function playerClick (state, rowId, squareId) {
       state.board = insertPlayOnBoard(state.board, rowId, squareId, state.symbol);
 
       state.winner = resolveGameWinner(state.board);
-      Log.debug(`New game state: ${JSON.stringify(state)}`);
   } catch (e) {
     Log.error("Some error happended: ", e);
   }
+
+  Log.debug("[GAME_STATE_OUT]: ", JSON.stringify(state, 2, null));
                 return state;
               }
 
@@ -64,7 +68,6 @@ export function resolveGameWinner (board) {
   const columns=[[],[],[]];
   for (let r=0; r < board.length; r++) {
     let row = board[r];
-
 
     // horizontal winner, check row at column idx 
     if (checksame([row[0],row[1],row[2]])) {

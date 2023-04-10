@@ -158,6 +158,7 @@ class Log {
     }
 }
 
+// Log.ENABLED=false;
 // Log.LVL=LOG_LVLS.WARN;
 // export default new Log({ type: 'log', defaultFormat: '[%lvl][%date] - '})
 export default new Log({ type: 'log', defaultFormat: '[%date][%lvl] - ' })

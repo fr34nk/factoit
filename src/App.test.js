@@ -66,9 +66,13 @@ describe('Test board component', () => {
   it('mark squares as user click (case 1)', async () => {
     render(<App />);
 
+    let play = { row: null, col: null };
+
+    play.row = 1;
+    play.col = 1;
     let rows = screen.getAllByLabelText(S.ROW);
-    let squaresSecondRow = await within(rows[1]).findAllByLabelText(S.SQUARE)
-    let secSqrSecRow = squaresSecondRow[1];
+    let squaresSecondRow = await within(rows[play.row]).findAllByLabelText(S.SQUARE)
+    let secSqrSecRow = squaresSecondRow[play.col];
     
     await waitFor(() => userEvent.click(secSqrSecRow))
 
@@ -78,19 +82,19 @@ describe('Test board component', () => {
     await waitFor(() => userEvent.click(secSqrSecRow))
     expect(secSqrSecRow).toHaveTextContent(C.PLAYER_1_SYMBOL)
 
+    // Log.debug(await printBoard());
 
     // it clicked in another square, fills it with '0'
-    let firstRow = await within(rows[0]).findAllByLabelText(S.SQUARE);
-    let secondSquareFirstRow = firstRow[1];
-
+    play.row=0;
+    play.col=1;
+    let firstRow = await within(rows[play.row]).findAllByLabelText(S.SQUARE);
+    let secondSquareFirstRow = firstRow[play.col];
     // expect non-clicked square to be NOT filled
     expect(secondSquareFirstRow).toHaveTextContent("")
 
-
     await waitFor(() => userEvent.click(secondSquareFirstRow))
+    // Log.debug(await printBoard());
     expect(secondSquareFirstRow).toHaveTextContent(C.PLAYER_2_SYMBOL)
-
-    expect(true).toBe(true)
   });
 
   it('mark squares as user click (case 2)', async () => {

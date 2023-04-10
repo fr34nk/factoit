@@ -16,11 +16,38 @@ export default function Game () {
 
   return (
     <div className="game">
-      <div className="game-board">
-        <Board />
+      <h2>Tic-Tac-Toe Game</h2>
+      <div className="container-control">
+        <div className='control arrow container'>
+          <div className="arrow-left" aria-label="control-left-arrow"> &lt; </div>
+        </div>
+        <div className="game-board">
+          <Board />
+        </div>
+        <div className='control arrow container'>
+          <div className="arrow-right" aria-label="control-right-arrow"> &gt; </div>
+        </div>
       </div>
       <div className="game-info">
-        <ol>{0}</ol>
+        <h4>Round Plays</h4>
+        <ul className="container-round" aria-label="container-round">
+
+          <div className="round" aria-label="round-play">
+            <div className="play">Round 1: </div>
+            <div className="description">Player 1 put a {C.PLAYER_1_SYMBOL} on square k,z</div>
+          </div>
+
+          <div className="round" aria-label="round-play">
+            <div className="play">Round 1: </div>
+            <div className="description">Player 1 put a {C.PLAYER_1_SYMBOL} on square k,z</div>
+          </div>
+
+          <div className="round" aria-label="round-play">
+            <div className="play">Round 1: </div>
+            <div className="description">Player 1 put a {C.PLAYER_1_SYMBOL} on square k,z</div>
+          </div>
+
+        </ul>
       </div>
     </div>
   )
@@ -44,7 +71,6 @@ function Board () {
 
   return (
     <div className="board">
-      <h2>Tic-Tac-Toe Game</h2>
       {boardRows}
     </div>
   )

@@ -11,9 +11,8 @@ const useGame = (initialState) => {
 
 export default useGame;
 
-
 // === Game Logic ===
-export function roundPlay (state, rowId, squareId) {
+export function playerClick (state, rowId, squareId) {
   try {
       // Increment round number
       if (state.round === 9) {

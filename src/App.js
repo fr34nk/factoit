@@ -1,6 +1,6 @@
 import './App.css';
 import Log from './services/Logger';
-import useGame, { roundPlay } from './App.state';
+import useGame, { playerClick } from './App.state';
 import C from './interfaces/enums/GameContentsEnum';
 
 
@@ -62,7 +62,7 @@ function Board () {
     Log.debug('Square on row %row and column %column was clicked', { row: rowId, column: squareId });
 
     const stateReference = { ...state };
-    let resultState = roundPlay(stateReference, rowId, squareId)
+    let resultState = playerClick(stateReference, rowId, squareId)
     setState(resultState);
   }
 

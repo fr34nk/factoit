@@ -11,8 +11,48 @@ const selectors = {
   'ROW': /^row$/i,
   'SQUARE': /^square$/i,
   'CONTAINER_ROUND': /^container-round$/i,
+  'ROUND_PLAY': /^round-play$/i
 };
 const S=selectors;
+
+// === Helper ===
+
+// maps html el to array so we can loop it with map/filter/reduce... methods
+const _elmap = (el) => [...el];
+
+const getBoardInnerHtml = async () => {
+  let boardContent = [];
+  let rows = screen.getAllByLabelText(S.ROW);
+
+  await rows.forEach(async (row) => {
+    const rowContent = [];
+
+    const cols = await within(row).findAllByLabelText(S.SQUARE)
+    cols.map(col => {
+      const colContent = col.innerHTML;
+
+      colContent == undefined 
+        ? rowContent.push(null)
+        : rowContent.push(colContent);
+    });
+    boardContent.push(rowContent);
+  })
+
+  return boardContent;
+}
+
+const printBoard = async () => {
+  const board = await getBoardInnerHtml();
+  let result=''
+  for (const row of board) {
+    result+=`${JSON.stringify(row, 2, null)}\n`
+  }
+  console.log(result)
+}
+
+
+// === Tests ===
+  
 
 describe('Test game component', () => {
   beforeAll(() => {

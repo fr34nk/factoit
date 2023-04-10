@@ -1,7 +1,8 @@
 import { useCallback, useState } from 'react';
+import Log from './services/Logger';
+import C from './interfaces/enums/GameContentsEnum';
 
-
-const useGame = (initialState, rowId, colId) => {
+const useGame = (initialState) => {
   const [state, setValue] = useState(initialState);
   // useCallback memoize the value 
   const setState =  useCallback(x => setValue(x), []);
@@ -20,27 +21,39 @@ export function roundPlay (state, rowId, squareId) {
       }
       state.round += 1;
 
-      // calculate new state of the board
-      for (let i=0; i < state.board.length; i++) {
-        for (let j=0; j < state.board[i].length; j++) {
-            if (i == rowId && j == squareId) {
-              if (state.board[i][j] !== null) {
+      // calculate new state symbol
+      Log.debug('symbol: %s', { s: state.symbol })
+      state.symbol = state.symbol && state.symbol === C.PLAYER_1_SYMBOL 
+        ? C.PLAYER_2_SYMBOL
+        : C.PLAYER_1_SYMBOL;
+
+      state.board = insertPlayOnBoard(state.board, rowId, squareId, state.symbol);
+
+      state.winner = resolveGameWinner(state.board);
+      Log.debug(`New game state: ${JSON.stringify(state)}`);
+  } catch (e) {
+    Log.error("Some error happended: ", e);
+  }
                 return state;
               }
 
-              state.board[i][j] = state.symbol;
+function insertPlayOnBoard (board, rowId, squareId, symbol) {
+  // calculate new state of the board
+  for (let i=0; i < board.length; i++) {
+    for (let j=0; j < board[i].length; j++) {
+        Log.debug(`[${i}][${j}]: ${JSON.stringify(board)}`);
+        if (i === rowId && j === squareId) {
+          if (board[i][j] !== null) {
+            return board;
             }
+          Log.debug('Inserting symbol (%symbol), at row (%row) and column (%col)', { symbol, row: i, col: j });
+          board[i][j] = symbol;
+          return board;
         }
       }
-      state.winner = resolveGameWinner(state.board);
-      // calculate new state symbol
-      state.symbol = state.symbol === 'X' ? '0' : 'X';
-  } catch (e) {
-    console.error("Some error happended: ", e);
   }
-  return state;
+  return board;
 }
-
 
 export function resolveGameWinner (board) {
   // helper to check same value

@@ -1,6 +1,6 @@
 import './App.css';
 import Log from './services/Logger';
-import useGame, { playerClick } from './App.state';
+import useGame, { playerClick, playHistoryNextClick, playHistoryPreviousClick } from './App.state';
 import C from './interfaces/enums/GameContentsEnum';
 
 const boardInitialState = {
@@ -36,17 +36,42 @@ export default function Game () {
     setState(resultState);
   }
 
+  function onPlayHistoryClick (direction, ev) {
+    const stateClone = { ...state };
+
+    let { length } = state.playHistory
+    if (length === 0 || (stateClone.playHistorySelection + 1) === length) {
+      return;
+    }
+
+    const newState = direction == 'NEXT' 
+      ? playHistoryNextClick(stateClone) 
+      : playHistoryPreviousClick(stateClone) 
+
+    setState(newState);
+  }
+
   return (
-    <div className="game">
-      <h2>Tic-Tac-Toe Game</h2>
-      <div className="container-control">
-        <HistoryCtrlLeft />
-        <div className="game-board">
-          <Board onSquareClick={onSquareClick} state={state}/>
-        </div>
-        <HistoryCtrlRight/>
+    <div className="container">
+      <div className="left-fill">
+
       </div>
-      <HistoryInfo playHistory={state.playHistory}/>
+
+      <div className="game">
+
+        <h2>Tic-Tac-Toe Game</h2>
+        <div className="container-control">
+          <HistoryCtrlLeft onClick={onPlayHistoryClick.bind(this, 'PREVIOUS')}/>
+          <div className="game-board">
+            <Board onSquareClick={onSquareClick} state={state}/>
+          </div>
+          <HistoryCtrlRight onClick={onPlayHistoryClick.bind(this, 'NEXT')}/>
+        </div>
+        <HistoryInfo playHistory={state.playHistory}/>
+      </div>
+
+
+
     </div>
   )
 }
@@ -92,14 +117,15 @@ function Square ({ checked, rowId, squareId, onClick }) {
 // === History Info control === 
 function HistoryInfo ({ playHistory=[] }) {
   const historyInfoList = playHistory.map((info) => {
-    const { round, player, position: { row, col  } } = info;
+    const { active, round, player, position: { row, col  } } = info;
     const rowPosition = row + 1;
     const colPosition = col + 1;
 
+    const className="round " + (active ? '' : 'deactivated');
 
     return (
-        <div key={round} className="round">
-          <div className="play">Round {round}: </div>
+        <div key={round} className={className}>
+          <div className="round-number"><p>Round {round}: </p></div>
           <div className="description">
             <p aria-label="round-play"> Player {player} played on [{rowPosition}][{colPosition}] </p>
           </div>
@@ -118,17 +144,17 @@ function HistoryInfo ({ playHistory=[] }) {
 }
 
 
-function HistoryCtrlLeft () {
+function HistoryCtrlLeft ({ onClick }) {
   return (
-    <div className='control arrow container'>
+    <div className='control arrow container' onClick={onClick}>
       <div className="arrow-left" aria-label="control-left-arrow"> &lt; </div>
     </div>
   )
 }
 
-function HistoryCtrlRight () {
+function HistoryCtrlRight ({ onClick }) {
   return (
-    <div className='control arrow container'>
+    <div className='control arrow container' onClick={onClick}>
       <div className="arrow-right" aria-label="control-right-arrow"> &gt; </div>
     </div>
   )

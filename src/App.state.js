@@ -34,9 +34,9 @@ export function playerClick (state, rowId, squareId) {
         : C.PLAYER_1_SYMBOL;
 
 
-      state.board = insertPlayOnBoard(state.board, rowId, squareId, state.symbol);
+      state.board = playOnBoard(state.board, rowId, squareId, state.symbol);
 
-      const playDescription = { round: state.round, player: state.symbol, position: { row: rowId, col: squareId }};
+      const playDescription = { active: true, round: state.round, player: state.symbol, position: { row: rowId, col: squareId }};
       state.playHistory = [...state.playHistory, playDescription];
 
       state.winner = resolveGameWinner(state.board);
@@ -46,9 +46,10 @@ export function playerClick (state, rowId, squareId) {
 
   Log.debug("[GAME_STATE_OUT]: ");
   Log.debug(JSON.stringify(state, 2, null));
-                return state;
-              }
+  return state;
+}
 
+// function insertPlayOnBoard (board, rowId, squareId, symbol) {
 function playOnBoard (board, row, col, symbol) {
   // calculate new state of the board
   for (let i=0; i < board.length; i++) {
@@ -59,10 +60,19 @@ function playOnBoard (board, row, col, symbol) {
           board[i][j] = symbol;
           return board;
         }
-      }
+    }
   }
   return board;
 }
+
+function unPlayOnBoard (board, row, col) {
+  const symbol = null;
+  const newState = playOnBoard(board, row, col, symbol);
+  // console.log('newState: ', );
+  // console.log(newState);
+  return newState;
+}
+
 
 export function resolveGameWinner (board) {
   // helper to check same value
@@ -105,4 +115,54 @@ export function resolveGameWinner (board) {
 
   // if no winner
   return null;
+}
+
+
+
+// === Play History Control ===
+
+// The following funcitons will update state playing back the steps dones  by the players
+export function playHistoryNextClick (state) {
+  // find first inactive 
+  const firstInactiveIdx = [...state.playHistory]
+    .findIndex((x) => x.active === false);
+
+  if (firstInactiveIdx === -1) {
+    return state;
+  }
+
+  // update original history item in place
+  const play = state.playHistory[firstInactiveIdx];
+
+  play.active = true;
+
+  state.board = playOnBoard(state.board, play.position.row, play.position.col, play.player);
+  state.symbol = play.player === C.PLAYER_1_SYMBOL 
+    ? C.PLAYER_2_SYMBOL
+    : C.PLAYER_1_SYMBOL;
+  state.round = play.round + 1;
+
+  return state;
+}
+
+export function playHistoryPreviousClick (state) {
+  // find first active backwards
+  const lastHistItemReversedIdx = [...state.playHistory]
+    .reverse()
+    .findIndex((x) => x.active === true);
+
+  const lastHIdx = state.playHistory.length - (lastHistItemReversedIdx + 1);
+
+  // update original history item in place
+  const play = state.playHistory[lastHIdx]
+
+  play.active = false;
+
+  state.board = unPlayOnBoard(state.board, play.position.row, play.position.col);
+  state.symbol = play.player === C.PLAYER_1_SYMBOL 
+    ? C.PLAYER_2_SYMBOL
+    : C.PLAYER_1_SYMBOL;
+  state.round = play.round - 1;
+
+  return state;
 }

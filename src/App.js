@@ -5,9 +5,9 @@ import C from './interfaces/enums/GameContentsEnum';
 
 const boardInitialState = {
   board: [  
-    [null, null, null],
-    [null, null, null],
-    [null, null, null]
+    [undefined, undefined, undefined],
+    [undefined, undefined, undefined],
+    [undefined, undefined, undefined]
   ],
   playHistory: [],
   symbol: null,

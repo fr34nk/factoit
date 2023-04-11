@@ -49,15 +49,12 @@ export function playerClick (state, rowId, squareId) {
                 return state;
               }
 
-function insertPlayOnBoard (board, rowId, squareId, symbol) {
+function playOnBoard (board, row, col, symbol) {
   // calculate new state of the board
   for (let i=0; i < board.length; i++) {
     for (let j=0; j < board[i].length; j++) {
         Log.debug(`[${i}][${j}]: ${JSON.stringify(board)}`);
-        if (i === rowId && j === squareId) {
-          if (board[i][j] !== null) {
-            return board;
-            }
+        if (i === row && j === col) {
           Log.debug('Inserting symbol (%symbol), at row (%row) and column (%col)', { symbol, row: i, col: j });
           board[i][j] = symbol;
           return board;

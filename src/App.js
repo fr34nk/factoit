@@ -3,7 +3,6 @@ import Log from './services/Logger';
 import useGame, { playerClick } from './App.state';
 import C from './interfaces/enums/GameContentsEnum';
 
-
 const boardInitialState = {
   board: [  
     [null, null, null],
@@ -12,7 +11,7 @@ const boardInitialState = {
   ],
   playHistory: [],
   symbol: null,
-  round: 1,
+  round: 0,
   winner: null
 }
 

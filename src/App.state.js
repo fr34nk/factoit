@@ -14,7 +14,8 @@ export default useGame;
 
 // === Game Logic ===
 export function playerClick (state, rowId, squareId) {
-  Log.debug("[GAME_STATE_IN]: ", JSON.stringify(state, 2, null));
+  Log.debug("[GAME_STATE_IN]: ")
+  Log.debug(JSON.stringify(state, 2, null));
 
   try {
       // Increment round number
@@ -43,7 +44,8 @@ export function playerClick (state, rowId, squareId) {
     Log.error("Some error happended: ", e);
   }
 
-  Log.debug("[GAME_STATE_OUT]: ", JSON.stringify(state, 2, null));
+  Log.debug("[GAME_STATE_OUT]: ");
+  Log.debug(JSON.stringify(state, 2, null));
                 return state;
               }
 

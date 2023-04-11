@@ -370,10 +370,56 @@ describe.skip('Test roundPlay game', () => {
   });
 });
 
+describe.only('Test history control arrows', () => {
+  it(`must display round history if some user theres a play`, async () => {
+    // setup
+    render(<App />);
+    
+    let play = { row: null, col: null };
+
+    play.row=1;
+    play.col=1;
+    let rows = screen.getAllByLabelText(S.ROW);
+    let squaresSecondRow = await within(rows[play.row]).findAllByLabelText(S.SQUARE)
+    let secSqrSecRow = squaresSecondRow[play.col];
+    
+    await waitFor(() => userEvent.click(secSqrSecRow))
+
+    expect(secSqrSecRow).toHaveTextContent(C.PLAYER_1_SYMBOL)
+
+    // expect round history item description to be 'play X on row[2]col[2]
+    let historyList = screen.getAllByLabelText(S.ROUND_PLAY);
+    expect(historyList).toHaveLength(1);
+    expect(historyList[0]).toHaveTextContent(`Player ${C.PLAYER_1_SYMBOL} played on [${play.row + 1}][${play.col + 1}]` );
+
+    // Second play
+    play.row=1;
+    play.col=2;
+    rows = screen.getAllByLabelText(S.ROW);
+    squaresSecondRow = await within(rows[play.row]).findAllByLabelText(S.SQUARE)
+    secSqrSecRow = squaresSecondRow[play.col];
+
+    await waitFor(() => userEvent.click(secSqrSecRow))
+
+    historyList = screen.getAllByLabelText(S.ROUND_PLAY);
+    expect(historyList).toHaveLength(2);
+    expect(historyList[1]).toHaveTextContent(`Player ${C.PLAYER_2_SYMBOL} played on [${play.row + 1}][${play.col + 1}]` );
+
+    // Thrid play
+    play.row=2;
+    play.col=2;
+    let play3Rows = screen.getAllByLabelText(S.ROW);
+    let row2Cols = await within(play3Rows[play.row]).findAllByLabelText(S.SQUARE)
+    let row2Col2 = row2Cols[play.col];
+
+    await waitFor(() => userEvent.click(row2Col2))
 
 
-describe.skip('Test history control arrows', () => {
-  it(`must display round history if some user theres a play`, () => {
+    historyList = screen.getAllByLabelText(S.ROUND_PLAY);
+    expect(historyList).toHaveLength(3);
+    expect(historyList[2]).toHaveTextContent(`Player ${C.PLAYER_1_SYMBOL} played on [${play.row + 1}][${play.col + 1}]` );
+
+
     expect(true).toBe(true);
   });
 
@@ -383,6 +429,5 @@ describe.skip('Test history control arrows', () => {
 
   it(`must revert round history if user clicks on left arrow`, () => {
     expect(true).toBe(true);
-
   });
 })
